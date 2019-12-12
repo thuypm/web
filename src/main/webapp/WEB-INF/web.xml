@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>  
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error.html</location> <!-- /src/main/webapp/error-404.html-->
+    </error-page>
+<filter>
+  <filter-name>adminFilter</filter-name>
+  <filter-class>web.filter.adminFilter</filter-class>
+</filter>
+ <filter>
+  <filter-name>userFilter</filter-name>
+  <filter-class>web.filter.userFilter</filter-class>
+</filter>
+        <servlet>
+            <servlet-name>signin</servlet-name>
+            <servlet-class>web.controller.signin</servlet-class>
+        </servlet>
+         <servlet>
+            <servlet-name>signup</servlet-name>
+            <servlet-class>web.controller.signup</servlet-class>
+        </servlet>
+           <servlet>
+            <servlet-name>userController</servlet-name>
+            <servlet-class>web.controller.userController</servlet-class>
+        </servlet>
+            <servlet>
+            <servlet-name>productController</servlet-name>
+            <servlet-class>web.controller.productController</servlet-class>
+        </servlet>
+          <servlet>
+            <servlet-name>adminController</servlet-name>
+            <servlet-class>web.controller.adminController</servlet-class>
+        </servlet>
+    
+
+<filter-mapping>
+  <filter-name>adminFilter</filter-name>
+  <url-pattern>/admin/*</url-pattern>
+</filter-mapping>  
+<filter-mapping>
+  <filter-name>userFilter</filter-name>
+  <url-pattern>/user/*</url-pattern>
+</filter-mapping>
+    
+
+        <servlet-mapping>
+            <servlet-name>productController</servlet-name>
+            <url-pattern>/product/*</url-pattern>
+        </servlet-mapping>
+        <servlet-mapping>
+            <servlet-name>signin</servlet-name>
+            <url-pattern>/signin</url-pattern>
+        </servlet-mapping>
+          <servlet-mapping>
+            <servlet-name>signup</servlet-name>
+            <url-pattern>/signup</url-pattern>
+        </servlet-mapping>
+         <servlet-mapping>
+            <servlet-name>userController</servlet-name>
+            <url-pattern>/user/do/*</url-pattern>
+        </servlet-mapping>
+           <servlet-mapping>
+            <servlet-name>adminController</servlet-name>
+            <url-pattern>/admin/do/*</url-pattern>
+        </servlet-mapping>
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+</web-app>

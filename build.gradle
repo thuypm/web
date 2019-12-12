@@ -1,0 +1,14 @@
+apply plugin: 'java'
+apply plugin: 'jacoco'
+apply plugin: 'war'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    providedCompile 'javax:javaee-web-api:7.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.microsoft.sqlserver:mssql-jdbc:7.4.1.jre12'
+    testCompile     'junit:junit:4.12'
+}

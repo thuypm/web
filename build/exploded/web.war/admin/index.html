@@ -1,0 +1,524 @@
+<!------ Include the above in your HEAD tag ---------->
+   <meta charset="utf-8">
+<link href="/css/btr.min.css" rel="stylesheet" id="bootstrap-css">
+<link href="/css/admin.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">Home</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
+
+
+
+
+<div class="container-fluid" style="padding-top: 5%"  id ="app">
+        <div class="modal fade"  v-bind:class="{show: modal == true}" id="exampleModalLong" role="dialog" >
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">{{productEdit.title}}</h5>
+                      <button type="button" class="close" v-on:click="modalFunction(false, null)" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text" id="inputGroupFileAddon01">Ảnh</span>
+                            </div>
+                            <div class="custom-file">
+                              <input type="file" class="custom-file-input" id="inputGroupFile01"
+                                aria-describedby="inputGroupFileAddon01" >
+                              <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                            </div>
+                          </div>
+                        <div class="row">
+                           <div class="col-xs-4 col-md-4">
+                               <b>
+                                 Mã SP </b>
+                                 <input type="text" class="form-control" v-model = "productEdit.productID" :disabled ="productEdit.prdID">
+                              </div>
+                             <div class="col-xs-5 col-md-5">
+                             <b>
+                                        Tên sản Phẩm </b>
+                                        <input type="text" class="form-control" v-model = "productEdit.name">
+                             </div>
+                              <div class="col-xs-3 col-md-3">
+                             <b>
+                                       Trang thái </b>
+                                        <input type="text" class="form-control" v-model = "productEdit.status">
+                             </div>
+                        </div>
+                        <div class="row">
+                             <div class="col-xs-4 col-md-4 ">
+                                    <div class="amount">
+                                            <b>Số lượng</b>
+                                            <input type="text" class="form-control" v-model = "productEdit.amount" >
+                                    </div>  
+                                </div>
+                             <div class="col-xs-4 col-md-4 ">
+                                    <div class="amount">
+                                            <b>Danh mục</b>
+                                            <input type="text" class="form-control" v-model = "productEdit.category">
+                                    </div>
+                                </div>
+                  
+                                <div class="col-xs-4 col-md-4 ">
+                              
+                                        <div class="day">
+                                          <b> Giá: </b>
+                                          <input type="text" class="form-control" v-model = "productEdit.price" >
+                                        </div>
+                                </div>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label for="comment" ><b>Mô tả</b></label>
+                        <textarea class="form-control" rows="3" id="comment" v-model = "productEdit.description"></textarea>
+                      </div>
+               <div class ="row">
+              <h5 style="color: red" class="text-center" v-show="errEdit != ''">
+               <b>{{errEdit}}</b>
+              </h5>
+             </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" v-on:click="modalFunction(false, null)">Close</button>
+                      <button type="button" class="btn btn-primary" v-on:click="saveFuntion()"> Save</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+    <div class="row">
+    </div>
+        <div class="row">
+            <div class="col-md-2 " >
+                    <div class="nav flex-column nav-pills position-fixed" id="v-pills-tab" role="tablist" aria-orientation="vertical" >
+                            <a class="nav-link list-group-item" v-bind:class="{active: isActive == 1}" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" v-on:click="selectMenu(1)">Danh sách sản phẩm</a>
+                            <a class="nav-link list-group-item" v-bind:class="{active: isActive == 2}"id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab"   v-on:click="selectMenu(2)">Danh sách đơn hàng</a>
+                            <a class="nav-link list-group-item"v-bind:class="{active: isActive == 3}" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" v-on:click="selectMenu(3)" >Quản lý hóa đơn</a>
+                            <a class="nav-link list-group-item"v-bind:class="{active: isActive == 4}" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" v-on:click="selectMenu(4)">Quản lý người dùng</a>
+                          </div>
+            </div>
+            <div class="col-md-9 well">
+                    <div class="tab-content" id="v-pills-tabContent" >
+                            <div class="tab-pane fade "  v-bind:class="{show: isActive == 1  , active: isActive == 1 }"id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                               <ul class="list-group">
+                                    <li class="list-group-item"style="background-color: #F7F7F7; ">
+                                            <div class="row">
+                                                    <div class="col-xs-1 col-md-1">
+                                                    </div>
+                                                   <div class="col-xs-2 col-md-2">
+                                                       <b>
+                                                         Mã SP </b>
+                                                         <input type="text" class="form-control" >
+                                                      </div>
+                                                     <div class="col-xs-2 col-md-2">
+                                                     <b>
+                                                                Tên sản Phẩm </b>
+                                                                <input type="text" class="form-control" >
+                                                     </div>
+                                                 
+                                                     <div class="col-xs-2 col-md-2 ">
+                                                            <div class="amount">
+                                                                    <b>Danh mục</b>
+                                                                    <input type="text" class="form-control" >
+                                                            </div>  
+                                                        </div>
+                                                     <div class="col-xs-1 col-md-1 ">
+                                                            <div class="amount">
+                                                                    <b>SL</b>
+                                                                    <input type="text" class="form-control" >
+                                                            </div>
+                                                            
+                                                        </div>
+                                                        <div class="col-xs-2 col-md-2 ">
+                                                      
+                                                                <div class="day">
+                                                                  <b> Giá: </b>
+                                                                  <input type="text" class="form-control" >
+                                                                </div>
+    
+                                                        </div>
+                                                     <div class="col-xs-2 col-md-2 ">
+                                                            <button type="button" class="btn btn-primary btn-xs" v-on:click="modalFunction(true, null)" title="ADD">
+                                                                <span class="fa fa-plus"></span>
+                                                            </button>
+                                                            <button type="button" class="btn btn-danger btn-xs float-right" title="Delete">
+                                                                <span class="fa fa-trash"></span>
+                                                            </button>
+                                                       
+                                                        </div>
+                                                    </div>
+                                       </li>                  
+                                   <li class="list-group-item" v-for="(product, id) in listProduct" :key="id" v-bind:class="{ 'bg-danger': !product.status }" >                               
+                                        <div class="row">
+                                                <div class="col-xs-1 col-md-1">
+                                                    <img width="80" height="80" :src="'/images/product/100x100/' + product.productID.trim() + '.jpg'" class="img-circle img-responsive" alt="" /></div>
+                                                 <div class="col-xs-2 col-md-2">
+                                                       <h5> 
+                                                            {{product.productID}} </a></h5>
+                                                 </div>
+                                                 <div class="col-xs-2 col-md-2">
+                                                        <h5> <a :href="'/product.jsp?productID=' + product.productID" class="text-decoration-none"> 
+                                                             {{product.name}}</a></h5>
+                                          
+                                                  </div>
+                                                 <div class="col-xs-2 col-md-2 ">
+                                                        <div class="amount">
+                                                      {{product.category}}
+                                                        </div>
+                                                        
+                                                    </div>
+                                                 <div class="col-xs-1 col-md-1 ">
+                                                        <div class="amount">
+                                                           {{product.amount}}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-2 col-md-2 ">
+                                                            <div class="day">
+                                                                    {{product.price}}
+                                                            </div>
+
+                                                    </div>
+                                                 <div class="col-xs-2 col-md-2 ">
+                                                        <button type="button" class="btn btn-secondary btn-xs float-right" title="Approved">
+                                                                <span class="fa fa-check"></span>
+                                                            </button>
+                                                        <div class="day">
+                                                            <b>Ngày tạo: </b>
+                                                       {{product.dateCreate}}
+                                                              </div>
+                                                        <button type="button" class="btn btn-primary btn-xs" title="Edit" v-on:click="modalFunction(true, product)">
+                                                            <span class="fa fa-pencil"></span>
+                                                        </button>
+                                                      
+                                                        <button type="button" class="btn btn-danger btn-xs"v-if="product.status" v-on:click="deleteFunction(product, id)"title="Delete">
+                                                            <span class="fa fa-trash"></span>
+                                                        </button>
+                                                   
+                                                    </div>
+                                                </div>
+                                                <div class="row container-fluid">
+                                                        <b>Mô tả:  </b>{{product.description}}
+                                                </div>
+                                   </li>
+
+                               </ul>
+                            </div>
+                            <div class="tab-pane fade container" v-bind:class="{show: isActive == 2 , active: isActive == 2 }" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+    <div class="my-3 p-3 bg-white box-shadow" v-for="(order,id) in listOrder":key =id >
+    <h6 class=" pb-2 mb-0">Người dùng: {{order.username}}</h6>
+    <h6 class=" pb-2 mb-0">SĐT: {{order.phone}}</h6>
+    <h6 class="border-bottom border-gray pb-2 mb-0">Địa chỉ: {{order.adress}}</h6>
+    <div class="box-shadow" v-for="(product, i) in order.listProduct":key=i style="background-color: rgb(247, 247, 247);" >
+    <div class="media text-muted pt-3">
+      <img :data-src="'/images/product/100x100/' + product.productID.trim() + '.jpg'" alt="32x32" class="mr-2 rounded" style="width: 32px; height: 32px;" :src="'/images/product/100x100/' + product.productID.trim() + '.jpg'" data-holder-rendered="true">
+      <p class="media-body pb-3 mb-0 small lh-125  border-gray">
+    <strong class="d-block text-gray-dark">@{{product.name}}</strong>        
+      </p>
+      </div>
+        <h6 > Giá:{{product.price}}</h6>
+       <h6 > số lượng:{{product.numOfProduct}} </h6>
+       <h6 class="border-bottom border-gray pb-2 mb-0" style="color:red"> Thành tiền:{{product.price*product.numOfProduct}}</h6>
+     
+    </div>
+      <div class="row" style="padding-top:2%">
+           <div class="col-6">
+               <h5>Tổng thanh toán:<b style="color:red">{{order.totalPrice}}</b></h5>
+           </div>
+          <div class="col-6">
+<button type="button" class="btn btn-outline-success" v-on:click="confirmOrder(order, id)">Xác nhận đơn hàng</button>
+<button type="button" class="btn btn-outline-danger" v-on:click="deleteOrder(order, id, 1)">Xóa đơn hàng</button>
+           </div>
+          
+       </div>
+   
+       </div>
+                                
+                            </div>
+                            <div class="tab-pane fade" v-bind:class="{show:isActive == 3 , active: isActive == 3 }"id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+                            
+      <div class="my-3 p-3 bg-white box-shadow" v-for="(order,id) in listOrderChecked":key =id >
+    <h6 class=" pb-2 mb-0">Người dùng: {{order.username}}</h6>
+    <h6 class=" pb-2 mb-0">SĐT: {{order.phone}}</h6>
+    <h6 class="border-bottom border-gray pb-2 mb-0">Địa chỉ: {{order.adress}}</h6>
+    <div class="box-shadow" v-for="(product, i) in order.listProduct":key=i style="background-color: rgb(247, 247, 247);" >
+    <div class="media text-muted pt-3">
+      <img :data-src="'/images/product/100x100/' + product.productID.trim() + '.jpg'" alt="32x32" alt="32x32" class=" rounded" style="width: 32px; height: 32px;" :src="'/images/product/100x100/' + product.productID.trim() + '.jpg'" >
+      <p class="media-body pb-3 mb-0 small lh-125  border-gray">
+    <strong class="d-block text-gray-dark">@{{product.name}}</strong>        
+      </p>
+      </div>
+        <h6 > Giá:{{product.price}}</h6>
+       <h6 > số lượng:{{product.numOfProduct}} </h6>
+       <h6 class="border-bottom border-gray pb-2 mb-0" style="color:red"> Thành tiền:{{product.price*product.numOfProduct}}</h6>
+     
+    </div>
+      <div class="row" style="padding-top:2%">
+           <div class="col-6">
+               <h5>Tổng thanh toán:<b style="color:red">{{order.totalPrice}}</b></h5>
+           </div>
+          <div class="col-6">
+<button type="button" class="btn btn-outline-danger" v-on:click="deleteOrder(order, id, 1)">Xóa đơn hàng</button>
+           </div>
+          
+       </div>
+   
+       </div> 
+                            </div>
+                            <div class="tab-pane fade" v-bind:class="{show: isActive == 4 , active: isActive == 4 }"id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
+   <div class="my-3 p-3 bg-white box-shadow" v-for="(user,id) in listUser":key =id >
+    <h6 class=" pb-2 mb-0">Người dùng: {{user.username}}</h6>
+    <h6 class=" pb-2 mb-0">SĐT: {{user.phone}}</h6>
+    <h6 class="border-bottom border-gray pb-2 mb-0">Địa chỉ: {{user.adress}}</h6>
+   
+      <div class="row" style="padding-top:2%">
+           <div class="col-6">
+               <h5>Quyền admin ? :<b style="color:red">{{user.admin}}</b></h5>
+           </div>
+          <div class="col-6">
+<button type="button" class="btn btn-outline-success" v-if="!user.admin" v-on:click="setAdmin(user, id)"> Set as admin</button>
+<button type="button" class="btn btn-outline-danger" v-on:click="deleteUser(user, id)">Delete </button>
+           </div>
+          
+       </div>
+   
+       </div>           
+                            
+                            </div>
+                    </div>
+            </div>
+        </div>
+ </div>
+ </script>
+        <script src="../js/vue.min.js"></script>
+        <script src="../js/axios.min.js"></script>
+    <script>
+   
+
+
+//var listproduct = [];
+        var app = new Vue({
+                 el: '#app',
+                    data: {
+                      errEdit: "",
+                        productEdit: {
+                        title: "Thêm sản phẩm",
+                        prdID: true,
+                        productID: "",
+                        name: "",
+                        price: 0,
+                        category: "",
+                        amount: 0,
+                        dateCreate: "",
+                        description: "",
+                        status: true,
+                        },
+
+                        modal: false,
+                    isActive: 1,
+                    listProduct: [],
+                    listOrder: [],
+                    listOrderChecked: [],
+                    listUser: [],
+                    file: ''
+                    
+
+                    },
+                  
+                      mounted: function()
+                    {
+                       
+                             axios.get("/admin/do/getAllProduct").then((res)=>   
+                             {
+                                this.listProduct = res.data;  
+                             });
+                       
+                              axios.get("/admin/do/getAllOrder").then((res)=>   
+                            {
+                               this.listOrder = this.sumPrice(res.data);
+                              
+                             })
+                               axios.get("/admin/do/getAllUser").then((res)=>   
+                            {
+                               
+                               this.listUser = res.data;
+                              
+                             })
+                                 axios.get("/admin/do/getAllOrderChecked").then((res)=>   
+                            {
+                             this.listOrderChecked =  this.sumPrice(res.data);
+                             })
+                             
+                    },
+
+                    methods: {
+//                         onFileChange(e) {
+//                    var files = e.target.files;
+//            this.file = files[0];
+//            console.log(this.file);
+//                         },
+                        setAdmin: function(user, id)
+                {
+                    axios.post("/admin/do/setAdmin", user.username).then((res)=>{
+                  
+                        if(res.data)
+                         {    alert("set Admin xong");
+                        this.listUser[id].admin = 1;
+                    
+                    }
+                    
+                    else alert('có lỗi')
+                    })
+                },
+                          deleteUser: function(user, id)
+                {
+                    axios.post("/admin/do/deleteUser", user.username).then((res)=>{
+                  
+                        if(res.data)
+                         {    alert("Đã xóa người dùng");
+                        this.listUser[id].splice(id,1);
+                    
+                    }
+                    
+                    else alert('có lỗi')
+                    })
+                },
+                
+                        confirmOrder: function(order, id)
+                {
+                   
+                    axios.post("/admin/do/confirmOrder", order.billID).then((res)=>{
+                       
+                        if(res.data)
+                         {    alert("đã xác nhận đơn hàng");
+                        this.listOrder.splice(id, 1);
+                        this.listOrderChecked.push(order);
+                    }
+                    else alert('có lỗi')
+                    })
+                },
+                          deleteOrder: function(order, id, vt)
+                {
+                   
+                    axios.post("/admin/do/deleteOrder", order.billID).then((res)=>{
+                     
+                        if(res.data)
+                         {    alert("đã xóa đơn hàng");
+                             if(vt == 1)
+                                     this.listOrder.splice(id, 1);
+                       else 
+                           this.listOrderChecked.splice(id, 1);
+                    }
+                    else alert('có lỗi')
+                    })
+                },
+                        selectMenu: function(value)
+                        {   
+                              this.isActive = value;
+                        },
+                          sumPrice: function(list)
+                        {
+                            
+                            for(i =0; i< list.length;i++)
+                            {
+                               list[i].totalPrice = 0;
+                               for(j =0; j< list[i].listProduct.length;j++)
+                list[i].totalPrice += list[i].listProduct[j].numOfProduct *list[i].listProduct[j].price
+                            }
+                            return list;
+                        },
+                        deleteFunction: function(product, id){
+                          axios.post("/admin/do/deleteProduct", product.productID).then((res)=>
+                            {
+                              if(res.data)
+                                {
+                                 alert("Xóa thành công");
+                                 this.listProduct[id].status = false;
+                                }
+                                else
+                                  alert("có lỗi , vui lòng reload");
+
+                            });
+                        },
+                        saveFuntion: function(){
+                      var  data = {
+                        productID: this.productEdit.productID,
+                        name:  this.productEdit.name,
+                        category:  this.productEdit.category,
+                        amount:  this.productEdit.amount,
+                        price:  this.productEdit.price,
+                        status:  this.productEdit.status,
+                        dateCreate: new Date().getTime(),
+           
+                        description:  this.productEdit.description,
+                          };
+                          console.log(data);
+                          if(this.productEdit.prdID == false)
+                           if(this.productEdit.productID.trim() == "")
+                            {
+                              alert("bạn chưa điền ID sản phẩm");
+                              return;
+                            }
+                            else
+                            axios.post("/admin/do/addProduct", data).then((res)=>
+                            {
+                               
+                              if(res.data)
+                                {
+                                     errEdit = "Thêm thành công";
+                              this.listProduct.push(data);
+                                  alert("thêm thành công");
+                                }
+                                else
+                                  alert("lỗi trùng mã SP")
+
+                            });
+                          else
+                          axios.post("/admin/do/editProduct", data).then((res)=>
+                            {
+                              if(res.data)
+                                {
+                                  alert("đã lưu")
+                                  listProduct.push(data);
+                                }
+                                else
+                                  errEdit = "Lỗi không xác định";
+                            });
+
+                        },
+                        modalFunction: function(val, data)
+                        {  
+                             if(data != null)
+                            {
+                                this.productEdit = data;
+                                this.productEdit.title = "Sửa thông tin";
+                                this.productEdit.prdID = true;
+                            }   
+                            else
+                           {
+                            this.productEdit = new Object();
+                            this.productEdit.title = "Thêm sản phẩm ";
+                            this.productEdit.prdID = false;
+                           }
+                                         
+                            this.modal = val;
+                        }
+                    }
+                        })
+                      
+    
+    </script>
